@@ -1,23 +1,27 @@
 const r = require("raylib");
 
-let scannerX = 0;
-const scannerY = 0;
-const scannerWidth = 50;
-let scannerColor;
-
-const firstParticleX = 400;
-const firstParticleWidth = 30;
-const secondParticleX = 100;
-const secondParticleWidth = 50;
-const particleColor = r.BLUE;
-
 const windowWidth = 800;
 const windowHeight = 500;
+
+const firstParticleX = 200;
+const firstParticleWidth = 60;
+const secondParticleX = 500;
+const secondParticleWidth = 30;
+const particleColor = r.BLUE;
+
+let firstScannerX = 0;
+let firstScannerColor;
+let secondScannerX = windowWidth / 2;
+let secondScannerColor;
+const scannerWidth = 50;
+
+const yCoordinate = 0;
 
 const forward = 1;
 const backward = -1;
 
-let direction = forward;
+let firstScannerDirection = forward;
+let secondScannerDirection = forward;
 
 function running() {
     return !r.WindowShouldClose();
@@ -28,7 +32,39 @@ function setup() {
     r.SetTargetFPS(100);
 }
 
-function scannerMovement(speed) {
+
+function hasParticleDetected(xPosition, scannerWidth, particleX, particleWidth) {
+    if ((((xPosition + scannerWidth) >= particleX) && ((xPosition + scannerWidth) <= (particleX + particleWidth)))
+        ||
+        ((xPosition >= particleX) && (xPosition <= (particleX + particleWidth))))
+        return true;
+
+    if (scannerWidth > particleWidth) {
+        if ((((particleX + particleWidth) >= xPosition) && ((particleX + particleWidth) <= (scannerWidth + xPosition)))
+            ||
+            ((particleX >= xPosition) && (particleX <= (xPosition + scannerWidth))))
+            return true;
+    }
+
+    return false;
+
+}
+
+function firstDirection() {
+    if ((firstScannerX + scannerWidth) === windowWidth / 2)
+        firstScannerDirection = backward;
+    if (firstScannerX === 0)
+        firstScannerDirection = forward;
+}
+
+function secondDirection() {
+    if ((secondScannerX + scannerWidth) === windowWidth)
+        secondScannerDirection = backward;
+    if (secondScannerX === windowWidth / 2)
+        secondScannerDirection = forward;
+}
+
+function scannerMovement(scannerX, speed, direction) {
     let movement;
 
     if (direction === forward)
@@ -39,48 +75,28 @@ function scannerMovement(speed) {
     return movement;
 }
 
-function hasParticleDetected(particleX, particleWidth) {
-    if ((((scannerX + scannerWidth) >= particleX) && ((scannerX + scannerWidth) <= (particleX + particleWidth)))
-        ||
-        ((scannerX >= particleX) && (scannerX <= (particleX + particleWidth))))
-        return true;
 
-    if (scannerWidth > particleWidth) {
-        if ((((particleX + particleWidth) >= scannerX) && ((particleX + particleWidth) <= (scannerWidth + scannerX)))
-            ||
-            ((particleX >= scannerX) && (particleX <= (scannerX + scannerWidth))))
-            return true;
-    }
-
-    return false;
-
-}
-
-function changeDirection() {
-    if (scannerX === (windowWidth - scannerWidth))
-        direction = backward;
-    if (scannerX === 0)
-        direction = forward;
-}
-
-
-function update() {
-    let speed = 1;
-
-    changeScannerColor();
-
-    scannerX = scannerMovement(speed);
-
-    changeDirection();
-}
-
-function changeScannerColor() {
-    const particleDetected = hasParticleDetected(firstParticleX, firstParticleWidth) || hasParticleDetected(secondParticleX, secondParticleWidth);
+function changeScannerColor(xPosition, scannerWidth, particleX, particleWidth) {
+    const particleDetected = hasParticleDetected(xPosition, scannerWidth, particleX, particleWidth);
 
     if (particleDetected)
-        scannerColor = r.RED;
+        return r.RED;
     else
-        scannerColor = r.WHITE;
+        return r.WHITE;
+}
+
+function update() {
+    const firstScannerSpeed = 1;
+    const secondScannerSpeed = 5;
+
+    firstScannerX = scannerMovement(firstScannerX, firstScannerSpeed, firstScannerDirection);
+    firstScannerColor = changeScannerColor(firstScannerX, scannerWidth, firstParticleX, firstParticleWidth);
+    firstDirection();
+
+    secondScannerX = scannerMovement(secondScannerX, secondScannerSpeed, secondScannerDirection);
+    secondScannerColor = changeScannerColor(secondScannerX, scannerWidth, secondParticleX, secondParticleWidth);
+    secondDirection();
+
 }
 
 function draw() {
@@ -88,9 +104,10 @@ function draw() {
 
     r.ClearBackground(r.BLACK);
 
-    r.DrawRectangle(secondParticleX, scannerY, secondParticleWidth, windowHeight, particleColor)
-    r.DrawRectangle(firstParticleX, scannerY, firstParticleWidth, windowHeight, particleColor);
-    r.DrawRectangle(scannerX, scannerY, scannerWidth, windowHeight, scannerColor);
+    r.DrawRectangle(secondParticleX, yCoordinate, secondParticleWidth, windowHeight, particleColor)
+    r.DrawRectangle(firstParticleX, yCoordinate, firstParticleWidth, windowHeight, particleColor);
+    r.DrawRectangle(firstScannerX, yCoordinate, scannerWidth, windowHeight, firstScannerColor);
+    r.DrawRectangle(secondScannerX, yCoordinate, scannerWidth, windowHeight, secondScannerColor);
 
     r.EndDrawing();
 }
