@@ -1,54 +1,74 @@
 const r = require("raylib");
 
-function running() {
-    return !r.WindowShouldClose();
-}
+let scannerX = 0;
+const scannerY = 0;
+const scannerWidth = 50;
+let scannerColor;
+
+const particleX = 400;
+const particleWidth = 100;
 
 const windowWidth = 800;
 const windowHeight = 500;
 
-function setup() {
-    r.InitWindow(windowWidth, windowHeight, "Scanning for particles")
-    r.SetTargetFPS(100)
+const forward = 1;
+const backward = -1;
+
+let direction = forward;
+
+function running() {
+    return !r.WindowShouldClose();
 }
 
+function setup() {
+    r.InitWindow(windowWidth, windowHeight, "Scanning for particles");
+    r.SetTargetFPS(100);
+}
 
+function scannerMovement(speed) {
+    let movement;
+
+    if (direction === forward)
+        movement = scannerX + speed;
+    if (direction === backward)
+        movement = scannerX - speed;
+
+    return movement;
+}
+
+function changeScannerColor() {
+    if (((scannerX + scannerWidth) >= particleX) || (scannerX === (particleX + particleWidth)))
+        scannerColor = r.RED;
+
+    if (((scannerX + scannerWidth) < particleX) || (scannerX > (particleX + particleWidth)))
+        scannerColor = r.WHITE;
+}
+
+function changeDirection() {
+    if (scannerX === (windowWidth - scannerWidth))
+        direction = backward;
+    if (scannerX === 0)
+        direction = forward;
+}
 
 function update() {
-    let speed = 1
-    if (direction === 1)
-        scannerXaxis = scannerXaxis + speed
-    if (direction === -1)
-        scannerXaxis = scannerXaxis - speed
+    let speed = 1;
+
+    changeScannerColor();
+    scannerX = scannerMovement(speed);
     changeDirection();
 }
 
-let direction = 1
-
-function changeDirection() {
-    if (scannerXaxis === windowWidth - scannerWidth)
-        direction = -1;
-    if (scannerXaxis === 0)
-        direction = 1;
-}
-
-let scannerXaxis = 0;
-const scannerYaxis = 0;
-const scannerWidth = 50;
-
-const particleXaxis = 100;
-const particleWidth = 100;
-
-
 function draw() {
-    r.BeginDrawing()
-    r.ClearBackground(r.BLACK)
-    r.DrawRectangle(particleXaxis, scannerYaxis, particleWidth, windowHeight, r.BLUE)
-    r.DrawRectangle(scannerXaxis, scannerYaxis, scannerWidth, windowHeight, r.WHITE)
-    update();
-    r.EndDrawing()
-}
+    r.BeginDrawing();
 
+    r.ClearBackground(r.BLACK);
+
+    r.DrawRectangle(particleX, scannerY, particleWidth, windowHeight, r.BLUE);
+    r.DrawRectangle(scannerX, scannerY, scannerWidth, windowHeight, scannerColor);
+
+    r.EndDrawing();
+}
 
 function teardown() {
     r.CloseWindow();
