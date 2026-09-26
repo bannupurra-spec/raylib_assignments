@@ -17,31 +17,34 @@ function setup() {
 function update() {
     let speed = 1
     if (direction === 1)
-        xPosition = xPosition + speed
+        scannerXaxis = scannerXaxis + speed
     if (direction === -1)
-        xPosition = xPosition - speed
+        scannerXaxis = scannerXaxis - speed
     changeDirection();
 }
 
 let direction = 1
 
 function changeDirection() {
-    if (xPosition === windowWidth - rectWidth)
+    if (scannerXaxis === windowWidth - scannerWidth)
         direction = -1;
-    if (xPosition === 0)
+    if (scannerXaxis === 0)
         direction = 1;
 }
 
-let xPosition = 0;
-const yPosition = 0;
-const rectWidth = 50;
-const rectHeight = windowHeight
+let scannerXaxis = 0;
+const scannerYaxis = 0;
+const scannerWidth = 50;
+
+const particleXaxis = 100;
+const particleWidth = 100;
 
 
 function draw() {
     r.BeginDrawing()
     r.ClearBackground(r.BLACK)
-    r.DrawRectangle(xPosition, yPosition, rectWidth, rectHeight, r.WHITE)
+    r.DrawRectangle(particleXaxis, scannerYaxis, particleWidth, windowHeight, r.BLUE)
+    r.DrawRectangle(scannerXaxis, scannerYaxis, scannerWidth, windowHeight, r.WHITE)
     update();
     r.EndDrawing()
 }
