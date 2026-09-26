@@ -5,8 +5,11 @@ const scannerY = 0;
 const scannerWidth = 50;
 let scannerColor;
 
-const particleX = 400;
-const particleWidth = 100;
+const firstParticleX = 400;
+const firstParticleWidth = 30;
+const secondParticleX = 100;
+const secondParticleWidth = 50;
+const particleColor = r.BLUE;
 
 const windowWidth = 800;
 const windowHeight = 500;
@@ -36,12 +39,21 @@ function scannerMovement(speed) {
     return movement;
 }
 
-function changeScannerColor() {
-    if (((scannerX + scannerWidth) >= particleX) || (scannerX === (particleX + particleWidth)))
-        scannerColor = r.RED;
+function hasParticleDetected(particleX, particleWidth) {
+    if ((((scannerX + scannerWidth) >= particleX) && ((scannerX + scannerWidth) <= (particleX + particleWidth)))
+        ||
+        ((scannerX >= particleX) && (scannerX <= (particleX + particleWidth))))
+        return true;
 
-    if (((scannerX + scannerWidth) < particleX) || (scannerX > (particleX + particleWidth)))
-        scannerColor = r.WHITE;
+    if (scannerWidth > particleWidth) {
+        if ((((particleX + particleWidth) >= scannerX) && ((particleX + particleWidth) <= (scannerWidth + scannerX)))
+            ||
+            ((particleX >= scannerX) && (particleX <= (scannerX + scannerWidth))))
+            return true;
+    }
+
+    return false;
+
 }
 
 function changeDirection() {
@@ -51,10 +63,18 @@ function changeDirection() {
         direction = forward;
 }
 
+// function 
+
 function update() {
     let speed = 1;
 
-    changeScannerColor();
+    const particleDetected = hasParticleDetected(firstParticleX, firstParticleWidth) || hasParticleDetected(secondParticleX, secondParticleWidth);
+
+    if (particleDetected)
+        scannerColor = r.RED;
+    else
+        scannerColor = r.WHITE;
+
     scannerX = scannerMovement(speed);
     changeDirection();
 }
@@ -64,7 +84,8 @@ function draw() {
 
     r.ClearBackground(r.BLACK);
 
-    r.DrawRectangle(particleX, scannerY, particleWidth, windowHeight, r.BLUE);
+    r.DrawRectangle(secondParticleX, scannerY, secondParticleWidth, windowHeight, particleColor)
+    r.DrawRectangle(firstParticleX, scannerY, firstParticleWidth, windowHeight, particleColor);
     r.DrawRectangle(scannerX, scannerY, scannerWidth, windowHeight, scannerColor);
 
     r.EndDrawing();
