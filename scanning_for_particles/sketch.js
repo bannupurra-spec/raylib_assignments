@@ -63,20 +63,24 @@ function changeDirection() {
         direction = forward;
 }
 
-// function 
 
 function update() {
     let speed = 1;
 
+    changeScannerColor();
+
+    scannerX = scannerMovement(speed);
+
+    changeDirection();
+}
+
+function changeScannerColor() {
     const particleDetected = hasParticleDetected(firstParticleX, firstParticleWidth) || hasParticleDetected(secondParticleX, secondParticleWidth);
 
     if (particleDetected)
         scannerColor = r.RED;
     else
         scannerColor = r.WHITE;
-
-    scannerX = scannerMovement(speed);
-    changeDirection();
 }
 
 function draw() {
