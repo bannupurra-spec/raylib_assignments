@@ -1,4 +1,8 @@
 const r = require("raylib");
+const s = require("./scanner.js");
+const s1 = require("./s1.js");
+const s2 = require("./s2.js");
+const s3 = require("./s3.js");
 
 const windowWidth = 800;
 const windowHeight = 500;
@@ -15,24 +19,9 @@ const particle3Height = 20;
 
 const particleColor = r.BLUE;
 
-let scanner1X = 0;
-let scanner1Color;
-let scanner1Direction = 1;
-const scanner1Speed = 1;
-
-let scanner2X = windowWidth / 2;
-let scanner2Color;
-let scanner2Direction = 1;
-const secondScannerSpeed = 5;
-
 const scannerWidth = 50;
 
-const scanner3X = 0;
-let scanner3Y = 0;
-const scanner3Height = 40;
-let scanner3Color = r.WHITE;
-let scanner3Direction = 1;
-
+let xCordinate = windowWidth / 2;
 const yCoordinate = 0;
 
 function running() {
@@ -44,33 +33,15 @@ function setup() {
   r.SetTargetFPS(100);
 }
 
-function isOverlapping(xPosition, scannerWidth, particleX, particleWidth) {
-  return (
-    xPosition + scannerWidth >= particleX &&
-    xPosition <= particleX + particleWidth
-  );
-}
-
 function hasParticleDetected(
   xPosition,
   scannerWidth,
   particleX,
   particleWidth,
 ) {
-  return isOverlapping(xPosition, scannerWidth, particleX, particleWidth)
+  return s.isOverlapping(xPosition, scannerWidth, particleX, particleWidth)
     ? true
     : false;
-}
-
-function direction(x, y, start, end, direction) {
-  direction = y === end ? -1 : direction;
-  direction = start === x ? 1 : direction;
-  return direction;
-}
-
-function scannerMovement(scannerX, speed, direction) {
-  speed = direction === -1 ? -speed : speed;
-  return scannerX + speed;
 }
 
 function changeScannerColor(xPosition, scannerWidth, particleX, particleWidth) {
@@ -85,64 +56,64 @@ function changeScannerColor(xPosition, scannerWidth, particleX, particleWidth) {
 
 function update() {
   const scanner1Xpos = 0;
-  const scanner1Ypos = scanner1X + scannerWidth;
-  const scanner1Start = scanner1X;
+  const scanner1Ypos = s1.xCordinate + scannerWidth;
+  const scanner1Start = s1.xCordinate;
   const scanner1End = windowWidth / 2;
 
   const scanner2Xpos = windowWidth / 2;
-  const scanner2Ypos = scanner2X + scannerWidth;
-  const scanner2Start = scanner2X;
+  const scanner2Ypos = xCordinate + scannerWidth;
+  const scanner2Start = xCordinate;
   const scanner2End = windowWidth;
 
   const scanner3Xpos = 0;
-  const scanner3Ypos = scanner3Y + scanner3Height;
-  const scannerStart = scanner3Y;
+  const scanner3Ypos = s3.yCordinate + s3.height;
+  const scannerStart = s3.yCordinate;
   const scannerEnd = windowHeight;
 
-  scanner1X = scannerMovement(scanner1X, scanner1Speed, scanner1Direction);
-  scanner1Color = changeScannerColor(
-    scanner1X,
+  s1.xCordinate = s.scannerMovement(s1.xCordinate, s1.speed, s1.direction);
+  s1.Color = changeScannerColor(
+    s1.xCordinate,
     scannerWidth,
     particle1X,
     Particle1Width,
   );
-  scanner1Direction = direction(
+  s1.direction = s.direction(
     scanner1Xpos,
     scanner1Ypos,
     scanner1Start,
     scanner1End,
-    scanner1Direction,
+    s1.direction,
   );
 
-  scanner2X = scannerMovement(scanner2X, secondScannerSpeed, scanner2Direction);
-  scanner2Color = changeScannerColor(
-    scanner2X,
+  xCordinate = s.scannerMovement(xCordinate, s2.speed, s2.direction);
+  s2.color = changeScannerColor(
+    xCordinate,
     scannerWidth,
     particle2X,
     particle2Width,
   );
 
-  scanner2Direction = direction(
+  s2.direction = s.direction(
     scanner2Xpos,
     scanner2Ypos,
     scanner2Start,
     scanner2End,
-    scanner2Direction,
+    s2.direction,
   );
 
-  scanner3Y = scannerMovement(scanner3Y, 1, scanner3Direction);
-  scanner3Color = changeScannerColor(
-    scanner3Y,
-    scanner3Height,
+  s3.yCordinate = s.scannerMovement(s3.yCordinate, 1, s3.direction);
+  s3.color = changeScannerColor(
+    s3.yCordinate,
+    s3.height,
     particle3Y,
     particle3Height,
   );
-  scanner3Direction = direction(
+  s3.direction = s.direction(
     scanner3Xpos,
     scanner3Ypos,
     scannerStart,
     scannerEnd,
-    scanner3Direction,
+    s3.direction,
   );
 }
 
@@ -174,26 +145,26 @@ function draw() {
     particleColor,
   );
   r.DrawRectangle(
-    scanner1X,
+    s1.xCordinate,
     yCoordinate,
     scannerWidth,
     windowHeight,
-    scanner1Color,
+    s1.Color,
   );
   r.DrawRectangle(
-    scanner2X,
+    xCordinate,
     yCoordinate,
     scannerWidth,
     windowHeight,
-    scanner2Color,
+    s2.color,
   );
 
   r.DrawRectangle(
-    scanner3X,
-    scanner3Y,
+    s3.xCordinate,
+    s3.yCordinate,
     windowWidth,
-    scanner3Height,
-    scanner3Color,
+    s3.height,
+    s3.color,
   );
 
   r.EndDrawing();
