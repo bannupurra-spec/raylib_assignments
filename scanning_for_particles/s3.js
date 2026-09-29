@@ -3,6 +3,7 @@ let yCordinate = 0;
 const height = 40;
 let color;
 let direction = 1;
+const speed = 1;
 
 module.exports = {
   xCordinate,
@@ -10,4 +11,5 @@ module.exports = {
   height,
   color,
   direction,
+  speed,
 };

@@ -6,9 +6,7 @@ function isOverlapping(xPosition, scannerWidth, particleX, particleWidth) {
 }
 
 function direction(x, y, start, end, direction) {
-  direction = y === end ? -1 : direction;
-  direction = start === x ? 1 : direction;
-  return direction;
+  return y > end || start < x ? -direction : direction;
 }
 
 function scannerMovement(scannerX, speed, direction) {

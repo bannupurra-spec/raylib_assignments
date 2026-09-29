@@ -33,25 +33,10 @@ function setup() {
   r.SetTargetFPS(100);
 }
 
-function hasParticleDetected(
-  xPosition,
-  scannerWidth,
-  particleX,
-  particleWidth,
-) {
-  return s.isOverlapping(xPosition, scannerWidth, particleX, particleWidth)
-    ? true
-    : false;
-}
-
 function changeScannerColor(xPosition, scannerWidth, particleX, particleWidth) {
-  const particleDetected = hasParticleDetected(
-    xPosition,
-    scannerWidth,
-    particleX,
-    particleWidth,
-  );
-  return particleDetected ? r.RED : r.WHITE;
+  return s.isOverlapping(xPosition, scannerWidth, particleX, particleWidth)
+    ? r.RED
+    : r.WHITE;
 }
 
 function update() {
@@ -67,16 +52,9 @@ function update() {
 
   const scanner3Xpos = 0;
   const scanner3Ypos = s3.yCordinate + s3.height;
-  const scannerStart = s3.yCordinate;
-  const scannerEnd = windowHeight;
+  const scanner3Start = s3.yCordinate;
+  const scanner3End = windowHeight;
 
-  s1.xCordinate = s.scannerMovement(s1.xCordinate, s1.speed, s1.direction);
-  s1.Color = changeScannerColor(
-    s1.xCordinate,
-    scannerWidth,
-    particle1X,
-    Particle1Width,
-  );
   s1.direction = s.direction(
     scanner1Xpos,
     scanner1Ypos,
@@ -85,12 +63,13 @@ function update() {
     s1.direction,
   );
 
-  xCordinate = s.scannerMovement(xCordinate, s2.speed, s2.direction);
-  s2.color = changeScannerColor(
-    xCordinate,
+  s1.xCordinate = s.scannerMovement(s1.xCordinate, s1.speed, s1.direction);
+
+  s1.Color = changeScannerColor(
+    s1.xCordinate,
     scannerWidth,
-    particle2X,
-    particle2Width,
+    particle1X,
+    Particle1Width,
   );
 
   s2.direction = s.direction(
@@ -101,19 +80,30 @@ function update() {
     s2.direction,
   );
 
-  s3.yCordinate = s.scannerMovement(s3.yCordinate, 1, s3.direction);
+  xCordinate = s.scannerMovement(xCordinate, s2.speed, s2.direction);
+
+  s2.color = changeScannerColor(
+    xCordinate,
+    scannerWidth,
+    particle2X,
+    particle2Width,
+  );
+
+  s3.direction = s.direction(
+    scanner3Xpos,
+    scanner3Ypos,
+    scanner3Start,
+    scanner3End,
+    s3.direction,
+  );
+
+  s3.yCordinate = s.scannerMovement(s3.yCordinate, s3.speed, s3.direction);
+
   s3.color = changeScannerColor(
     s3.yCordinate,
     s3.height,
     particle3Y,
     particle3Height,
-  );
-  s3.direction = s.direction(
-    scanner3Xpos,
-    scanner3Ypos,
-    scannerStart,
-    scannerEnd,
-    s3.direction,
   );
 }
 
