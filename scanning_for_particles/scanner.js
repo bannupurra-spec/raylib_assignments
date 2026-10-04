@@ -1,12 +1,5 @@
-const sk = require("./sketch.js");
 const r = require("raylib");
 
-function createWindow(width, height) {
-  return {
-    width,
-    height,
-  };
-}
 function createParticle(x, y, width, height, color) {
   return {
     x,
@@ -119,11 +112,7 @@ function draw(particleOrScanner) {
 }
 
 module.exports = {
-  createWindow,
   createScanner,
-  isOverlapping,
-  direction,
-  scannerMovement,
   createParticle,
   horizontalScanner,
   verticalScanner,
