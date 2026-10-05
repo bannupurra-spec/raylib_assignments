@@ -33,70 +33,45 @@ function createScanner(
   };
 }
 
-function isOverlapping(scannerX, scannerWidth, particleX, particleWidth) {
-  return (
-    scannerX + scannerWidth >= particleX &&
-    scannerX <= particleX + particleWidth
-  );
-}
-
-function changeScannerColor(xPosition, scannerWidth, particleX, particleWidth) {
-  return isOverlapping(xPosition, scannerWidth, particleX, particleWidth);
-}
-
-function direction(
-  scannerStart,
-  scannerEnd,
-  upperBound,
-  lowerBound,
-  direction,
+function isOverlapping(
+  scannerPosition,
+  scannerSize,
+  particlePosition,
+  particleSize,
 ) {
-  return scannerEnd > lowerBound || scannerStart < upperBound
-    ? -direction
-    : direction;
-}
-
-function scannerMovement(scannerX, speed, direction) {
-  speed = direction === -1 ? -speed : speed;
-  return scannerX + speed;
-}
-
-function horizontalScanner(scanner, particle) {
-  scanner.direction = direction(
-    scanner.y,
-    scanner.y + scanner.height,
-    scanner.upperBound,
-    scanner.lowerBound,
-    scanner.direction,
+  return (
+    scannerPosition + scannerSize >= particlePosition &&
+    scannerPosition <= particlePosition + particleSize
   );
-  scanner.y = scannerMovement(scanner.y, scanner.speed, scanner.direction);
-  scanner.color = changeScannerColor(
-    scanner.y,
-    scanner.height,
-    particle.y,
-    particle.height,
-  )
-    ? r.RED
-    : r.WHITE;
 }
 
-function verticalScanner(scanner, particle1, particle2) {
-  scanner.direction = direction(
-    scanner.x,
-    scanner.x + scanner.width,
-    scanner.upperBound,
-    scanner.lowerBound,
-    scanner.direction,
-  );
-  scanner.x = scannerMovement(scanner.x, scanner.speed, scanner.direction);
+function direction(scannerStart, scannerEnd, scanner) {
+  return scannerEnd > scanner.lowerBound || scannerStart < scanner.upperBound
+    ? -scanner.direction
+    : scanner.direction;
+}
+
+function updateScannerMovement(scannerPosition, scanner) {
+  scanner.speed = scanner.direction === -1 ? -scanner.speed : scanner.speed;
+  return scannerPosition + scanner.speed;
+}
+
+function moveHorizontalScanner(scanner, particle1, particle2) {
+  scanner.direction = direction(scanner.y, scanner.y + scanner.height, scanner);
+  scanner.y = updateScannerMovement(scanner.y, scanner);
   scanner.color =
-    changeScannerColor(
-      scanner.x,
-      scanner.width,
-      particle1.x,
-      particle1.width,
-    ) ||
-    changeScannerColor(scanner.x, scanner.width, particle2.x, particle2.width)
+    isOverlapping(scanner.y, scanner.height, particle1.y, particle1.height) ||
+    isOverlapping(scanner.y, scanner.height, particle2.y, particle2.height)
+      ? r.RED
+      : r.WHITE;
+}
+
+function moveVerticalScanner(scanner, particle1, particle2) {
+  scanner.direction = direction(scanner.x, scanner.x + scanner.width, scanner);
+  scanner.x = updateScannerMovement(scanner.x, scanner);
+  scanner.color =
+    isOverlapping(scanner.x, scanner.width, particle1.x, particle1.width) ||
+    isOverlapping(scanner.x, scanner.width, particle2.x, particle2.width)
       ? r.RED
       : r.WHITE;
 }
@@ -114,7 +89,7 @@ function draw(particleOrScanner) {
 module.exports = {
   createScanner,
   createParticle,
-  horizontalScanner,
-  verticalScanner,
+  moveHorizontalScanner,
+  moveVerticalScanner,
   draw,
 };
