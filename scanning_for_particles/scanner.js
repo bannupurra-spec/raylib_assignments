@@ -55,25 +55,34 @@ function updateScannerMovement(scannerPosition, scanner) {
   scanner.speed = scanner.direction === -1 ? -scanner.speed : scanner.speed;
   return scannerPosition + scanner.speed;
 }
+function isOverlappingHorizontal(scanner, particle1, particle2) {
+  return (
+    isOverlapping(scanner.y, scanner.height, particle1.y, particle1.height) ||
+    isOverlapping(scanner.y, scanner.height, particle2.y, particle2.height)
+  );
+}
 
 function moveHorizontalScanner(scanner, particle1, particle2) {
   scanner.direction = direction(scanner.y, scanner.y + scanner.height, scanner);
   scanner.y = updateScannerMovement(scanner.y, scanner);
-  scanner.color =
-    isOverlapping(scanner.y, scanner.height, particle1.y, particle1.height) ||
-    isOverlapping(scanner.y, scanner.height, particle2.y, particle2.height)
-      ? r.RED
-      : r.WHITE;
+  scanner.color = isOverlappingHorizontal(scanner, particle1, particle2)
+    ? r.RED
+    : r.WHITE;
+}
+
+function isOverlappingVertical(scanner, particle1, particle2) {
+  return (
+    isOverlapping(scanner.x, scanner.width, particle1.x, particle1.width) ||
+    isOverlapping(scanner.x, scanner.width, particle2.x, particle2.width)
+  );
 }
 
 function moveVerticalScanner(scanner, particle1, particle2) {
   scanner.direction = direction(scanner.x, scanner.x + scanner.width, scanner);
   scanner.x = updateScannerMovement(scanner.x, scanner);
-  scanner.color =
-    isOverlapping(scanner.x, scanner.width, particle1.x, particle1.width) ||
-    isOverlapping(scanner.x, scanner.width, particle2.x, particle2.width)
-      ? r.RED
-      : r.WHITE;
+  scanner.color = isOverlappingVertical(scanner, particle1, particle2)
+    ? r.RED
+    : r.WHITE;
 }
 
 function draw(particleOrScanner) {
